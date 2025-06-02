@@ -4,21 +4,29 @@ namespace App\Http\Controllers;
 
 use App\Events\NewMessage;
 use App\Models\Message;
+use App\Models\User;
 use App\Services\MessageService;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
     private MessageService $service;
-    public function __construct($service)
+    public function __construct(MessageService $service)
     {
         $this->service = $service;
     }
 
-    public function getMessage()
+    public function getUsers(): \Illuminate\Database\Eloquent\Collection
     {
-        NewMessage::dispatch();
-        return $this->service->getMessage();
+        return $this->service->getUsers();
+    }
+
+
+    public function getMessage(Request $request)
+    {
+
+//        NewMessage::dispatch();
+        return $this->service->getMessage($request);
     }
 
     public function sendMessage(Request $request)

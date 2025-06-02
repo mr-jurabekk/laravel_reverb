@@ -45,4 +45,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function messagesTo()
+    {
+        return $this->hasMany(Message::class, 'to');
+    }
+    public function messagesFrom()
+    {
+        return $this->hasMany(Message::class, 'from');
+    }
 }
