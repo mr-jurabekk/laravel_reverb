@@ -15,8 +15,9 @@ class MessageFactory extends Factory
     public function definition(): array
     {
         return [
-            'from' => rand(1, 4),
-            'to' => rand(5, 11),
+            'id_owner' => 1,
+            'from' => 1,
+            'to' => 1,
             'text' => $this->faker->text(),
             'new' => 1,
             'created_at' => now(),

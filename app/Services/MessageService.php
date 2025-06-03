@@ -4,6 +4,7 @@
 namespace App\Services;
 
 
+use App\Events\NewMessage;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -36,10 +37,12 @@ class MessageService
     public function sendMessage($request)
     {
         Message::create([
+            'id_owner' => Auth::id(),
             'from' => Auth::id(),
             'to' => $request->to,
             'text' => $request->text
         ]);
+        NewMessage::dispatch();
         return response('success', 200);
     }
 

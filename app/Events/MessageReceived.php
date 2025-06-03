@@ -7,19 +7,23 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class NewMessage implements ShouldBroadcast
+class MessageReceived implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-//    public $message;
+    public $message;
+    public $id;
 
-    public function __construct()
+    /**
+     * Create a new event instance.
+     */
+    public function __construct($message, $id)
     {
-//        $this->message = 'hello world';
+        $this->message = $message;
+        $this->id = $id;
     }
 
     /**
@@ -30,7 +34,7 @@ class NewMessage implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('custom-channel'),
+            new PrivateChannel('messages'),
         ];
     }
 }

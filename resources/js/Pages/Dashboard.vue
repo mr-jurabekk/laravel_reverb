@@ -20,7 +20,7 @@
                         >
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center">
-                                    <div class="flex-none"><img src="/storage/assets/images/profile-34.jpeg" class="rounded-full h-12 w-12 object-cover" /></div>
+                                    <div class="flex-none"><img :src="`/storage/assets/images/profile-${$page.props.auth.user.id}.jpeg`" class="rounded-full h-12 w-12 object-cover" /></div>
                                     <div class="mx-3">
                                         <p class="mb-1 font-semibold">Alon Smith</p>
                                         <p class="text-xs text-white-dark">Software Developer</p>
@@ -99,7 +99,7 @@
                                             type="button"
                                             class="w-full flex justify-between items-center p-2 hover:bg-gray-100 dark:hover:bg-[#0e17261a] rounded-md dark:hover:text-primary hover:text-primary"
                                             :class="{
-                                    'bg-gray-100 dark:bg-[#0e17261a] dark:text-primary text-primary': selectedUser && selectedUser.some(item => item.from === person.id || item.to === person.id),
+                                    'bg-gray-100 dark:bg-[#0e17261a] dark:text-primary text-primary': selectedChat && selectedChat.some(item => item.from === person.id || item.to === person.id),
                                 }"
                                             @click="getMessage(person.id)"
                                         >
@@ -294,7 +294,7 @@
 
                            <!-- start chat-->
 
-                            <template v-if="isShowUserChat && selectedUser">
+                            <template v-if="isShowUserChat && selectedChat">
                                 <div class="relative h-full">
                                     <div class="flex justify-between items-center p-4">
                                         <div class="flex items-center space-x-2 rtl:space-x-reverse">
@@ -302,15 +302,15 @@
                                                 <icon-menu />
                                             </button>
                                             <div class="relative flex-none">
-                                                <img :src="`/storage/assets/images/${selectedUser.path}`" class="rounded-full w-10 h-10 sm:h-12 sm:w-12 object-cover" />
+                                                <img :src="`/storage/assets/images/profile-${selectedUserId}.jpeg`" class="rounded-full w-10 h-10 sm:h-12 sm:w-12 object-cover" />
                                                 <div class="absolute bottom-0 right-0">
                                                     <div class="w-4 h-4 bg-[#00AB55] rounded-full"></div>
                                                 </div>
                                             </div>
                                             <div class="mx-3">
-                                                <p class="font-semibold">{{ selectedUser.name }}</p>
+                                                <p class="font-semibold">{{ selectedChat.name }}</p>
                                                 <p class="text-white-dark text-xs">
-                                                    {{ selectedUser.active ? 'Active now' : 'Last seen at ' + selectedUser.time }}
+                                                    {{ selectedChat.active ? 'Active now' : 'Last seen at ' + selectedChat.time }}
                                                 </p>
                                             </div>
                                         </div>
@@ -331,44 +331,6 @@
                                                     >
                                                         <icon-horizontal-dots class="hover:text-primary rotate-90 opacity-70" />
                                                     </button>
-                                                    <template #content="{ close }">
-                                                        <ul @click="close()" class="text-black dark:text-white-dark">
-                                                            <li>
-                                                                <a href="javascript:;">
-                                                                    <icon-search class="ltr:mr-2 rtl:ml-2 shrink-0" />
-                                                                    Search
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="javascript:;">
-                                                                    <icon-copy class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-
-                                                                    Copy
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="javascript:;">
-                                                                    <icon-trash-lines class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-
-                                                                    Delete
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="javascript:;">
-                                                                    <icon-share class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-
-                                                                    Share
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="javascript:;">
-                                                                    <icon-settings class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" />
-
-                                                                    Settings
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </template>
                                                 </Popper>
                                             </div>
                                         </div>
@@ -378,41 +340,36 @@
                                         <div class="space-y-5 p-4 sm:pb-0 pb-[68px] sm:min-h-[300px] min-h-[400px]">
                                             <div class="block m-6 mt-0">
                                                 <h4 class="text-xs text-center border-b border-[#f4f4f4] dark:border-[#0e17261a] relative">
-                                                    <span class="relative top-2 px-3 bg-white dark:bg-[#0e17261a]">{{ 'Today, ' + selectedUser.time }}</span>
+                                                    <span class="relative top-2 px-3 bg-white dark:bg-[#0e17261a]">{{ 'Today, ' + selectedChat.time }}</span>
                                                 </h4>
                                             </div>
-                                            <template v-if="selectedUser && selectedUser.length">
-                                                <div v-for="(message, index) in selectedUser" :key="index">
-                                                    <div class="flex items-start gap-3" :class="{ 'justify-end': selectedUser.userId === message.fromUserId }">
-                                                        <div class="flex-none" :class="{ 'order-2': selectedUser.userId === message.fromUserId }">
-                                                            <template v-if="selectedUser.userId === message.fromUserId">
-                                                                <img :src="`/storage/assets/images/${loginUser.path}`" class="rounded-full h-10 w-10 object-cover" />
-                                                            </template>
-                                                            <template v-if="selectedUser.userId !== message.fromUserId">
-                                                                <img :src="`/storage/assets/images/${selectedUser.path}`" class="rounded-full h-10 w-10 object-cover" />
-                                                            </template>
-                                                        </div>
-                                                        <div class="space-y-2">
+                                            <template v-if="selectedChat && selectedChat.length">
+                                                <div v-for="(message, index) in selectedChat" :key="index">
+                                                    <!-- owner-->
+                                                    <div v-if="message.id_owner === $page.props.auth.user.id" class="flex items-start gap-3 justify-end">
+                                                        <div class="space-y-2 text-left">
                                                             <div class="flex items-center gap-3">
-                                                                <div
-                                                                    class="dark:bg-[#0e17261a] p-4 py-2 rounded-md bg-black/10"
-                                                                    :class="
-                                                            message.fromUserId == selectedUser.userId
-                                                                ? 'ltr:rounded-br-none rtl:rounded-bl-none !bg-[#4361EE] text-white'
-                                                                : 'ltr:rounded-bl-none rtl:rounded-br-none'
-                                                        "
-                                                                >
+                                                                <div class="dark:bg-[#0e17261a] p-4 py-2 rounded-md bg-black/10 ltr:rounded-br-none rtl:rounded-bl-none !bg-[#4361EE] text-white">
                                                                     {{ message.text }}
                                                                 </div>
-                                                                <div :class="{ hidden: selectedUser.userId === message.fromUserId }">
-                                                                    <icon-mood-smile class="hover:text-primary" />
-                                                                </div>
                                                             </div>
-                                                            <div
-                                                                class="text-xs text-white-dark"
-                                                                :class="{ 'ltr:text-right rtl:text-left': selectedUser.userId === message.fromUserId }"
-                                                            >
-                                                                {{ message.time ? message.time : '5h ago' }}
+                                                        </div>
+                                                        <div>
+                                                            <img :src="`/storage/assets/images/profile-${$page.props.auth.user.id}.jpeg`" class="rounded-full h-10 w-10 object-cover" />
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- guest-->
+                                                    <div v-else class="flex items-start gap-3" :class="{ 'justify-end': message.id_owner === $page.props.auth.user.id }">
+                                                        <div>
+                                                            <img :src="`/storage/assets/images/profile-${selectedUserId}.jpeg`" class="rounded-full h-10 w-10 object-cover" />
+                                                        </div>
+
+                                                        <div class="space-y-2 text-left">
+                                                            <div class="flex items-center gap-3">
+                                                                <div class="dark:bg-[#0e17261a] p-4 py-2 rounded-md bg-black/10 ltr:rounded-bl-none rtl:rounded-br-none">
+                                                                    {{ message.text }}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -440,20 +397,6 @@
                                                     <icon-send />
                                                 </button>
                                             </div>
-                                            <div class="items-center space-x-3 rtl:space-x-reverse sm:py-0 py-3 hidden sm:block">
-                                                <button type="button" class="bg-[#f4f4f4] dark:bg-[#0e17261a] hover:bg-primary-light rounded-md p-2 hover:text-primary">
-                                                    <icon-microphone-off />
-                                                </button>
-                                                <button type="button" class="bg-[#f4f4f4] dark:bg-[#0e17261a] hover:bg-primary-light rounded-md p-2 hover:text-primary">
-                                                    <icon-download />
-                                                </button>
-                                                <button type="button" class="bg-[#f4f4f4] dark:bg-[#0e17261a] hover:bg-primary-light rounded-md p-2 hover:text-primary">
-                                                    <icon-camera />
-                                                </button>
-                                                <button type="button" class="bg-[#f4f4f4] dark:bg-[#0e17261a] hover:bg-primary-light rounded-md p-2 hover:text-primary">
-                                                    <icon-horizontal-dots class="opacity-70" />
-                                                </button>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -469,7 +412,7 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import {ref, computed, onMounted, onUnmounted} from 'vue';
 import { useAppStore } from '@/stores/index';
 import { useHead } from '@vueuse/head'
 import Popper from 'vue3-popper'
@@ -497,14 +440,20 @@ import IconMicrophoneOff from '@/components/icon/icon-microphone-off.vue';
 import IconDownload from '@/components/icon/icon-download.vue';
 import IconCamera from '@/components/icon/icon-camera.vue';
 import IconMessage from '@/components/icon/icon-message.vue';
-
+import Echo from '@/echo'; // make sure this file exports an Echo instance
+const count = ref(0)
+Echo.channel('custom-channel').listen('NewMessage', e => {
+    getMessage(selectedUserId.value)
+});
 
 // useHead({ title: 'Chat' });
 const store = useAppStore();
 const isShowUserChat: any = ref(false);
 const isShowChatMenu: any = ref(false);
 const contactList: any = ref([]);
-const selectedUser: any = ref([]);
+const selectedChat: any = ref([]);
+const selectedUserId = ref(null);
+const authUser: any = ref([])
 const loginUser = ref({
     id: 0,
     name: 'Alon Smith',
@@ -522,234 +471,14 @@ function getUsers(){
 function getMessage(id){
     axios.get(`/getMessage?id=${id}`)
     .then((res)=>{
-        selectedUser.value = res.data;
+        selectedChat.value = res.data;
+        selectedUserId.value = id;
         isShowUserChat.value = true;
         scrollToBottom();
         isShowChatMenu.value = false;
     })
 }
 
-// const contactList = ref([
-//     {
-//         userId: 1,
-//         name: 'Nia Hillyer',
-//         path: 'profile-16.jpeg',
-//         time: '2:09 PM',
-//         preview: 'How do you do?',
-//         messages: [
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 1,
-//                 text: 'Hi, I am back from vacation',
-//             },
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 1,
-//                 text: 'How are you?',
-//             },
-//             {
-//                 fromUserId: 1,
-//                 toUserId: 0,
-//                 text: 'Welcom Back',
-//             },
-//             {
-//                 fromUserId: 1,
-//                 toUserId: 0,
-//                 text: 'I am all well',
-//             },
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 1,
-//                 text: 'Coffee?',
-//             },
-//         ],
-//         active: true,
-//     },
-//     {
-//         userId: 2,
-//         name: 'Sean Freeman',
-//         path: 'profile-1.jpeg',
-//         time: '12:09 PM',
-//         preview: 'I was wondering...',
-//         messages: [
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 2,
-//                 text: 'Hello',
-//             },
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 2,
-//                 text: "It's me",
-//             },
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 2,
-//                 text: 'I have a question regarding project.',
-//             },
-//         ],
-//         active: false,
-//     },
-//     {
-//         userId: 3,
-//         name: 'Alma Clarke',
-//         path: 'profile-2.jpeg',
-//         time: '1:44 PM',
-//         preview: 'I’ve forgotten how it felt before',
-//         messages: [
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 3,
-//                 text: 'Hey Buddy.',
-//             },
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 3,
-//                 text: "What's up",
-//             },
-//             {
-//                 fromUserId: 3,
-//                 toUserId: 0,
-//                 text: 'I am sick',
-//             },
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 3,
-//                 text: 'Not comming to office today.',
-//             },
-//         ],
-//         active: true,
-//     },
-//     {
-//         userId: 4,
-//         name: 'Alan Green',
-//         path: 'profile-3.jpeg',
-//         time: '2:06 PM',
-//         preview: 'But we’re probably gonna need a new carpet.',
-//         messages: [
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 4,
-//                 text: 'Hi, collect your check',
-//             },
-//             {
-//                 fromUserId: 4,
-//                 toUserId: 0,
-//                 text: 'Ok, I will be there in 10 mins',
-//             },
-//         ],
-//         active: true,
-//     },
-//     {
-//         userId: 5,
-//         name: 'Shaun Park',
-//         path: 'profile-4.jpeg',
-//         time: '2:05 PM',
-//         preview: 'It’s not that bad...',
-//         messages: [
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 3,
-//                 text: 'Hi, I am back from vacation',
-//             },
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 3,
-//                 text: 'How are you?',
-//             },
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 5,
-//                 text: 'Welcom Back',
-//             },
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 5,
-//                 text: 'I am all well',
-//             },
-//             {
-//                 fromUserId: 5,
-//                 toUserId: 0,
-//                 text: 'Coffee?',
-//             },
-//         ],
-//         active: false,
-//     },
-//     {
-//         userId: 6,
-//         name: 'Roxanne',
-//         path: 'profile-5.jpeg',
-//         time: '2:00 PM',
-//         preview: 'Wasup for the third time like is you bling bitch',
-//         messages: [
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 6,
-//                 text: 'Hi',
-//             },
-//             {
-//                 fromUserId: 0,
-//                 toUserId: 6,
-//                 text: 'Uploaded files to server.',
-//             },
-//         ],
-//         active: false,
-//     },
-//     {
-//         userId: 7,
-//         name: 'Ernest Reeves',
-//         path: 'profile-6.jpeg',
-//         time: '2:09 PM',
-//         preview: 'Wasup for the third time like is you bling bitch',
-//         messages: [],
-//         active: true,
-//     },
-//     {
-//         userId: 8,
-//         name: 'Laurie Fox',
-//         path: 'profile-7.jpeg',
-//         time: '12:09 PM',
-//         preview: 'Wasup for the third time like is you bling bitch',
-//         messages: [],
-//         active: true,
-//     },
-//     {
-//         userId: 9,
-//         name: 'Xavier',
-//         path: 'profile-8.jpeg',
-//         time: '4:09 PM',
-//         preview: 'Wasup for the third time like is you bling bitch',
-//         messages: [],
-//         active: false,
-//     },
-//     {
-//         userId: 10,
-//         name: 'Susan Phillips',
-//         path: 'profile-9.jpeg',
-//         time: '9:00 PM',
-//         preview: 'Wasup for the third time like is you bling bitch',
-//         messages: [],
-//         active: true,
-//     },
-//     {
-//         userId: 11,
-//         name: 'Dale Butler',
-//         path: 'profile-10.jpeg',
-//         time: '5:09 PM',
-//         preview: 'Wasup for the third time like is you bling bitch',
-//         messages: [],
-//         active: false,
-//     },
-//     {
-//         userId: 12,
-//         name: 'Grace Roberts',
-//         path: 'user-profile.jpeg',
-//         time: '8:01 PM',
-//         preview: 'Wasup for the third time like is you bling bitch',
-//         messages: [],
-//         active: true,
-//     },
-// ]);
 const searchUser = ref('');
 const textMessage = ref('');
 
@@ -766,17 +495,17 @@ const searchUsers = computed(() => {
     });
 });
 
-const sendMessage = () => {
+function sendMessage(){
     if (textMessage.value.trim()) {
-        const user: any = contactList.value.find((d) => d.userId === selectedUser.value.userId);
-        user.messages.push({
-            fromUserId: selectedUser.value.userId,
-            toUserId: 0,
-            text: textMessage.value,
-            time: 'Just now',
-        });
-        textMessage.value = '';
-        scrollToBottom();
+        axios.post('/sendMessage', {
+            to: selectedUserId.value,
+            text: textMessage.value
+        })
+        .then(()=>{
+            getMessage(selectedUserId.value)
+            textMessage.value = '';
+            scrollToBottom();
+        })
     }
 };
 

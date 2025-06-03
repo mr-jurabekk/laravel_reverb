@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Events\NewMessage;
-use App\Models\Message;
-use App\Models\User;
 use App\Services\MessageService;
 use Illuminate\Http\Request;
 
@@ -24,8 +22,6 @@ class MessageController extends Controller
 
     public function getMessage(Request $request)
     {
-
-//        NewMessage::dispatch();
         return $this->service->getMessage($request);
     }
 
