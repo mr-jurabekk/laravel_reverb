@@ -441,8 +441,7 @@ import IconDownload from '@/components/icon/icon-download.vue';
 import IconCamera from '@/components/icon/icon-camera.vue';
 import IconMessage from '@/components/icon/icon-message.vue';
 import Echo from '@/echo'; // make sure this file exports an Echo instance
-const count = ref(0)
-Echo.channel('custom-channel').listen('NewMessage', e => {
+Echo.channel('custom-channel').listen('NewMessage', () => {
     getMessage(selectedUserId.value)
 });
 
