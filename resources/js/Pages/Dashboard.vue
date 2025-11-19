@@ -22,7 +22,7 @@
                                 <div class="flex items-center">
                                     <div class="flex-none"><img :src="`/storage/assets/images/profile-${$page.props.auth.user.id}.jpeg`" class="rounded-full h-12 w-12 object-cover" /></div>
                                     <div class="mx-3">
-                                        <p class="mb-1 font-semibold">Alon Smith</p>
+                                        <p class="mb-1 font-semibold">{{ $page.props.auth.user.name }}</p>
                                         <p class="text-xs text-white-dark">Software Developer</p>
                                     </div>
                                 </div>
@@ -419,6 +419,7 @@ import Popper from 'vue3-popper'
 import axios from "axios";
 
 
+
 import IconHorizontalDots from '@/components/icon/icon-horizontal-dots.vue';
 import IconHelpCircle from '@/components/icon/icon-help-circle.vue';
 import IconSettings from '@/components/icon/icon-settings.vue';
@@ -441,10 +442,14 @@ import IconDownload from '@/components/icon/icon-download.vue';
 import IconCamera from '@/components/icon/icon-camera.vue';
 import IconMessage from '@/components/icon/icon-message.vue';
 import Echo from '@/echo'; // make sure this file exports an Echo instance
-Echo.channel('custom-channel').listen('NewMessage', () => {
+import { usePage } from '@inertiajs/vue3'
+const page = usePage()
+const authUserId = page.props.auth.user.id
+Echo.private(`user.${authUserId}`).listen('NewMessage', () => {
+    console.log('keldiii')
     getMessage(selectedUserId.value)
 });
-
+console.log('auth',authUserId)
 // useHead({ title: 'Chat' });
 const store = useAppStore();
 const isShowUserChat: any = ref(false);

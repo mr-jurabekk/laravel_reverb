@@ -42,8 +42,7 @@ class MessageService
             'to' => $request->to,
             'text' => $request->text
         ]);
-        NewMessage::dispatch();
+        NewMessage::dispatch($request->to);
         return response('success', 200);
     }
-
 }

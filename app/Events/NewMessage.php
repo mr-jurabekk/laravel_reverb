@@ -15,22 +15,20 @@ class NewMessage implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-//    public $message;
+    public $toUserId;
 
-    public function __construct()
+    public function __construct($toUserId)
     {
-//        $this->message = 'hello world';
+        $this->toUserId = $toUserId;
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * @return PrivateChannel
      */
-    public function broadcastOn(): array
+    public function broadcastOn()
     {
-        return [
-            new Channel('custom-channel'),
-        ];
+        return new PrivateChannel('user.' . $this->toUserId);
     }
 }
